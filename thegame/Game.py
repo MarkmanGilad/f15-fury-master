@@ -5,6 +5,7 @@ from openscreen import StartupScreen
 from human_agent import Human_agent
 from Ai_Agent import DQN_Agent
 from endgame import EndGameScreen
+from constant import *
 
 
 def main():
@@ -41,7 +42,7 @@ def main():
             human_agent.reset()
         env.render()
                   
-        env.clock.tick(60)
+        env.clock.tick(FPS)
 
         
 

@@ -2,8 +2,7 @@ import torch
 import random
 import math
 from DQN import DQN
-
-epsilon_start, epsilon_final, epsiln_decay = 1, 0.01, 100  # הארכתי את זמן החקירה
+from constant import *
 
 class DQN_Agent:
     def __init__(self, parametes_path = None, train = True, env= None, devive = torch.device('cpu')):
@@ -20,7 +19,7 @@ class DQN_Agent:
               self.DQN.eval()
 
     def Get_Action (self, state, epoch = 0, events= None, train = True) -> tuple:
-        actions = [0,1,2,3,4,5]
+        actions = ACTIONS
         if self.train and train:
             epsilon = self.epsilon_greedy(epoch)
             rnd = random.random()
@@ -45,7 +44,7 @@ class DQN_Agent:
         cols = actions.reshape(-1,1)
         return Q_values[rows, cols]
 
-    def epsilon_greedy(self,epoch, start = epsilon_start, final=epsilon_final, decay=epsiln_decay):
+    def epsilon_greedy(self,epoch, start = EPSILON_START, final=EPSILON_FINAL, decay=EPSILON_DECAY):
         if epoch < decay:
             return start - (start - final) * epoch/decay
         return final
@@ -59,10 +58,10 @@ class DQN_Agent:
     def load_params (self, path):
         self.DQN.load_params(path)
 
-    def fix_update (self, dqn, tau=0.001):
+    def fix_update (self, dqn, tau=SOFT_UPDATE_TAU):
         self.DQN.load_state_dict(dqn.state_dict())
 
-    def soft_update (self, dqn, tau=0.001):
+    def soft_update (self, dqn, tau=SOFT_UPDATE_TAU):
         with torch.no_grad():
             for dqn_hat_param, dqn_param in zip(self.DQN.parameters(), dqn.parameters()):
                 dqn_hat_param.data.copy_(tau * dqn_param.data + (1.0 - tau) * dqn_hat_param.data)

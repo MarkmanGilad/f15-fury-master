@@ -2,37 +2,35 @@ import pygame
 import sys
 import random
 import math
-
-WIDTH, HEIGHT = 1450, 720
-FPS = 60
+from constant import *
 
 class StartupScreen:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         pygame.mixer.music.load("sounds/backgroundmusic.mp3")
-        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.set_volume(OPENSCREEN_MUSIC_VOLUME)
         pygame.mixer.music.play(-1)
 
         # רקע כהה
-        self.background_color = (10, 10, 30)  # כחול כהה
+        self.background_color = OPENSCREEN_BACKGROUND_COLOR  # כחול כהה
 
         # כוכבים
-        self.stars = [{"x": random.randint(0, WIDTH), "y": random.randint(0, HEIGHT // 2)} for _ in range(100)]
+        self.stars = [{"x": random.randint(0, SCREEN_WIDTH), "y": random.randint(0, SCREEN_HEIGHT // 2)} for _ in range(NUM_STARS)]
 
 
         # כוכבי לכת
         self.planets = [
-            {"x": WIDTH, "y": HEIGHT // 3, "size": 200, "angle": 0, "rotation_speed": 0.1, "speed": 0.5, "color": (0, 102, 204)},
-            {"x": WIDTH + 500, "y": HEIGHT // 4, "size": 300, "angle": 0, "rotation_speed": 0.05, "speed": 0.3, "color": (204, 102, 0)}
+            {"x": SCREEN_WIDTH, "y": SCREEN_HEIGHT // 3, "size": 200, "angle": 0, "rotation_speed": 0.1, "speed": 0.5, "color": (0, 102, 204)},
+            {"x": SCREEN_WIDTH + 500, "y": SCREEN_HEIGHT // 4, "size": 300, "angle": 0, "rotation_speed": 0.05, "speed": 0.3, "color": (204, 102, 0)}
         ]
 
         # אסטרואידים
         self.asteroids = []
-        for _ in range(7):  # יצירת 7 אסטרואידים
-            x = random.randint(0, WIDTH)
-            y = random.randint(0, HEIGHT)
+        for _ in range(NUM_ASTEROIDS):  # יצירת 7 אסטרואידים
+            x = random.randint(0, SCREEN_WIDTH)
+            y = random.randint(0, SCREEN_HEIGHT)
             size = random.randint(30, 80)
             angle = random.randint(0, 360)
             rotation_speed = random.uniform(1, 5)  # מהירות סיבוב
@@ -45,13 +43,13 @@ class StartupScreen:
 
         # מטוס
         self.airplane = pygame.image.load("pictures/player.png")
-        self.airplane = pygame.transform.scale(self.airplane, (150, 140))
+        self.airplane = pygame.transform.scale(self.airplane, AIRPLANE_IMAGE_SIZE)
 
         # תמונת אסטרואיד
         self.asteroid_image = pygame.image.load("pictures/asteroid.png")
 
-        self.airplane_x = WIDTH // 4
-        self.airplane_y = HEIGHT // 2
+        self.airplane_x = SCREEN_WIDTH // 4
+        self.airplane_y = SCREEN_HEIGHT // 2
         self.airplane_direction = 1  # כיוון תנועה (1 = למטה, -1 = למעלה)
 
         # כפתורים
@@ -59,26 +57,26 @@ class StartupScreen:
         self.title_font = pygame.font.SysFont('arial', 64, bold=True)
         self.button_font = pygame.font.SysFont('arial', 36)
 
-        self.start_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 200, 50)
-        self.exit_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 70, 200, 50)
+        self.start_button = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2, ENDGAME_BUTTON_WIDTH, ENDGAME_BUTTON_HEIGHT)
+        self.exit_button = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + ENDGAME_BUTTON_SPACING, ENDGAME_BUTTON_WIDTH, ENDGAME_BUTTON_HEIGHT)
 
-        self.title = self.title_font.render("SPACESHIP FURY : SPACE ASSULT", True, (255, 255, 0))
-        self.title_rect = self.title.get_rect(center=(WIDTH // 2, HEIGHT // 4))
+        self.title = self.title_font.render("SPACESHIP FURY : SPACE ASSULT", True, COLOR_YELLOW)
+        self.title_rect = self.title.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4))
 
-        self.start_text = self.button_font.render("START", True, (0, 0, 0))
-        self.exit_text = self.button_font.render("EXIT", True, (0, 0, 0))
+        self.start_text = self.button_font.render("START", True, COLOR_BLACK)
+        self.exit_text = self.button_font.render("EXIT", True, COLOR_BLACK)
 
-        self.startcolor = (255, 255, 0)
-        self.hovercolor = (255, 0, 0)
-        self.exitcolor = (255, 255, 0)
-        self.hoverexitcolor = (255, 0, 0)
+        self.startcolor = COLOR_YELLOW
+        self.hovercolor = COLOR_RED
+        self.exitcolor = COLOR_YELLOW
+        self.hoverexitcolor = COLOR_RED
         self.start_text_rect = self.start_text.get_rect(center=self.start_button.center)
         self.exit_text_rect = self.exit_text.get_rect(center=self.exit_button.center)
 
         self.start_hovered = False
         self.exit_hovered = False
         self.button_sound = pygame.mixer.Sound("sounds/buttonselect.mp3")
-        self.button_sound.set_volume(0.3)
+        self.button_sound.set_volume(OPENSCREEN_MUSIC_VOLUME)
 
     def handle_events(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -89,7 +87,7 @@ class StartupScreen:
                 self.start_hovered = True
             self.startcolor = self.hovercolor
         else:
-            self.startcolor = (255, 255, 0)
+            self.startcolor = COLOR_YELLOW
             self.start_hovered = False
         # EXIT button hover
         if self.exit_button.collidepoint(mouse_pos):
@@ -98,7 +96,7 @@ class StartupScreen:
                 self.exit_hovered = True
             self.exitcolor = self.hoverexitcolor
         else:
-            self.exitcolor = (255, 255, 0)
+            self.exitcolor = COLOR_YELLOW
             self.exit_hovered = False
 
         for event in pygame.event.get():
@@ -111,13 +109,13 @@ class StartupScreen:
 
                 if self.start_button.collidepoint(mouse_pos):
                     click = pygame.mixer.Sound("sounds/buttonclick.mp3").play() 
-                    click.set_volume(0.3)
+                    click.set_volume(OPENSCREEN_MUSIC_VOLUME)
                     pygame.time.delay(300)  
                     return True  # המשתמש לחץ על "START"
 
                 if self.exit_button.collidepoint(mouse_pos):
                     click = pygame.mixer.Sound("sounds/buttonclick.mp3").play() 
-                    click.set_volume(0.3)
+                    click.set_volume(OPENSCREEN_MUSIC_VOLUME)
                     pygame.time.delay(300)   
                     pygame.quit()
                     sys.exit()
@@ -127,10 +125,10 @@ class StartupScreen:
     def update(self):
         # עדכון כוכבים
         for star in self.stars:
-            star["x"] -= 1  # תנועה שמאלה
+            star["x"] -= STAR_SPEED  # תנועה שמאלה
             if star["x"] < 0:  # אם הכוכב יוצא מהמסך
-                star["x"] = WIDTH  # החזר אותו לצד הימני של המסך
-                star["y"] = random.randint(0, HEIGHT // 2)  # מיקום אנכי חדש
+                star["x"] = SCREEN_WIDTH  # החזר אותו לצד הימני של המסך
+                star["y"] = random.randint(0, SCREEN_HEIGHT // 2)  # מיקום אנכי חדש
 
 
         # עדכון אסטרואידים
@@ -159,8 +157,8 @@ class StartupScreen:
 
             # אם האסטרואיד יוצא מהמסך
             if asteroid["x"] + asteroid["size"] < 0:
-                asteroid["x"] = WIDTH
-                asteroid["y"] = random.randint(0, HEIGHT)
+                asteroid["x"] = SCREEN_WIDTH
+                asteroid["y"] = random.randint(0, SCREEN_HEIGHT)
                 asteroid["size"] = random.randint(30, 80)
                 asteroid["angle"] = random.randint(0, 360)
                 asteroid["rotation_speed"] = random.uniform(1, 5)
@@ -168,8 +166,8 @@ class StartupScreen:
                 asteroid["particles"] = []  # איפוס חלקיקים
 
         # עדכון תנועת החללית
-        self.airplane_y += self.airplane_direction * 2  # מהירות תנועה אנכית
-        if self.airplane_y <= 50 or self.airplane_y + 75 >= HEIGHT - 50:  # טווח תנועה
+        self.airplane_y += self.airplane_direction * AIRPLANE_VERTICAL_SPEED  # מהירות תנועה אנכית
+        if self.airplane_y <= AIRPLANE_UPPER_BOUND or self.airplane_y + 75 >= SCREEN_HEIGHT - AIRPLANE_LOWER_OFFSET:  # טווח תנועה
             self.airplane_direction *= -1  # שינוי כיוון
 
     def draw(self):
@@ -178,7 +176,7 @@ class StartupScreen:
 
         # ציור כוכבים
         for star in self.stars:
-            pygame.draw.circle(self.screen, (255, 255, 255), (star["x"], star["y"]), 2)
+            pygame.draw.circle(self.screen, COLOR_WHITE, (star["x"], star["y"]), 2)
 
         
         # ציור אסטרואידים
@@ -189,19 +187,19 @@ class StartupScreen:
         self.screen.blit(self.airplane, (self.airplane_x, self.airplane_y))
 
         # ציור כותרת עם צל
-        shadow_offset = 5
-        shadow_color = (0, 0, 0)
+        shadow_offset = SHADOW_OFFSET
+        shadow_color = COLOR_BLACK
         self.screen.blit(self.title_font.render("SPACESHIP FURY : SPACE ASSULT", True, shadow_color),
                          (self.title_rect.x + shadow_offset, self.title_rect.y + shadow_offset))
         self.screen.blit(self.title, self.title_rect)
 
         # ציור כפתור START
-        pygame.draw.rect(self.screen, (0, 0, 0), self.start_button.inflate(10, 10))  # צל
+        pygame.draw.rect(self.screen, COLOR_BLACK, self.start_button.inflate(10, 10))  # צל
         pygame.draw.rect(self.screen, self.startcolor, self.start_button, border_radius=10)  # כפתור עם פינות מעוגלות
         self.screen.blit(self.start_text, self.start_text_rect)
 
         # ציור כפתור EXIT
-        pygame.draw.rect(self.screen, (0, 0, 0), self.exit_button.inflate(10, 10))  # צל
+        pygame.draw.rect(self.screen, COLOR_BLACK, self.exit_button.inflate(10, 10))  # צל
         pygame.draw.rect(self.screen, self.exitcolor, self.exit_button, border_radius=10)  # כפתור עם פינות מעוגלות
         self.screen.blit(self.exit_text, self.exit_text_rect)
 

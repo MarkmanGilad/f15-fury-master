@@ -1,30 +1,28 @@
 import pygame
 import random
 from buildings import Building
-
-WIDTH = 300
-HEIGHT = 750
+from constant import *
 
 class Fuel(pygame.sprite.Sprite):
-    count = 7
+    count = FUEL_INITIAL_COUNT
     def __init__(self):
         super().__init__()
         self.original_image = pygame.image.load("pictures/fuel.png")  # שם התמונה נשאר fuel.png
-        self.original_image = pygame.transform.scale(self.original_image, (100, 100))
+        self.original_image = pygame.transform.scale(self.original_image, FUEL_IMAGE_SIZE)
         self.image = self.original_image
-        self.y = random.randint(100, HEIGHT - 100)
-        self.rect = self.image.get_rect(topleft=(1600 + random.randint(-200, 800), self.y))
+        self.y = random.randint(FUEL_Y_MIN, BUILDING_SCREEN_HEIGHT - FUEL_Y_MIN)
+        self.rect = self.image.get_rect(topleft=(FUEL_START_X + random.randint(FUEL_X_OFFSET_MIN, FUEL_X_OFFSET_MAX), self.y))
         self.angle = 0  # זווית התחלתית לסיבוב
 
     def update(self):
-        Fuel.count += 0.005
+        Fuel.count += FUEL_SPEED_INCREMENT
         self.rect.x -= Fuel.count
-        if self.rect.x < -300:
+        if self.rect.x < FUEL_KILL_X:
             self.kill()
 
         # עדכון סיבוב
-        self.angle += 1  # שינוי זווית הסיבוב (1 מעלות בכל פריים)
-        if self.angle >= 360:  # שמירה על זווית בין 0 ל-359
+        self.angle += FUEL_ROTATION_SPEED  # שינוי זווית הסיבוב (1 מעלות בכל פריים)
+        if self.angle >= FUEL_ROTATION_MAX:  # שמירה על זווית בין 0 ל-359
             self.angle = 0
         self.image = pygame.transform.rotate(self.original_image, self.angle)  # סיבוב התמונה
         self.rect = self.image.get_rect(center=self.rect.center)  # עדכון המיקום לאחר הסיבוב

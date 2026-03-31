@@ -1,12 +1,10 @@
 import pygame
 import random
-
-WIDTH = 300
-HEIGHT = 750
+from constant import *
 
 class Building(pygame.sprite.Sprite): 
 
-    speed = 5
+    speed = BUILDING_SPEED
 
     def __init__(self):
         super().__init__() 
@@ -19,16 +17,16 @@ class Building(pygame.sprite.Sprite):
    
     
     def set_random_height(self):
-        options = list(range(60, 401, 100))
+        options = list(range(BUILDING_HEIGHT_MIN, BUILDING_HEIGHT_MAX, BUILDING_HEIGHT_STEP))
         self.height =  random.choice(options)  
-        self.image = pygame.transform.scale(self.image, (WIDTH, self.height))
-        self.rect = self.image.get_rect(topleft=(1600, 750 - self.height))
+        self.image = pygame.transform.scale(self.image, (BUILDING_WIDTH, self.height))
+        self.rect = self.image.get_rect(topleft=(BUILDING_START_X, BUILDING_SCREEN_HEIGHT - self.height))
         self.mask = pygame.mask.from_surface(self.image)
 
     def set_height(self, height):
-        self.height = 750 - height - 200
-        self.image = pygame.transform.scale(self.image, (WIDTH, self.height))
-        self.rect = self.image.get_rect(topleft=(1600, 0))
+        self.height = BUILDING_SCREEN_HEIGHT - height - BUILDING_GAP_OFFSET
+        self.image = pygame.transform.scale(self.image, (BUILDING_WIDTH, self.height))
+        self.rect = self.image.get_rect(topleft=(BUILDING_START_X, 0))
 
         self.image = pygame.transform.flip(self.image, False, True)
         self.mask = pygame.mask.from_surface(self.image)
@@ -37,7 +35,7 @@ class Building(pygame.sprite.Sprite):
     def update(self):
         self.rect.x -= Building.speed
         self.mask = pygame.mask.from_surface(self.image)
-        if self.rect.x < -300:
+        if self.rect.x < BUILDING_KILL_X:
             self.kill()
 
     def get_height(self):

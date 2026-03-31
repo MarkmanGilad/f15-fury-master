@@ -2,23 +2,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import copy
-
-
-input_size = 13
-layer1 = 64
-layer2 = 128 
-layer3 = 64
-output_size = 6
-gamma = 0.99
+from constant import *
 
 class DQN (nn.Module):
     def __init__(self, device = torch.device('cpu')) -> None:
         super().__init__()
         self.device = device
-        self.linear1 = nn.Linear(input_size, layer1)
-        self.linear2 = nn.Linear(layer1, layer2)
-        self.linear3 = nn.Linear(layer2, layer3)
-        self.output = nn.Linear(layer3, output_size)
+        self.linear1 = nn.Linear(DQN_INPUT_SIZE, DQN_LAYER1)
+        self.linear2 = nn.Linear(DQN_LAYER1, DQN_LAYER2)
+        self.linear3 = nn.Linear(DQN_LAYER2, DQN_LAYER3)
+        self.output = nn.Linear(DQN_LAYER3, DQN_OUTPUT_SIZE)
         self.MSELoss = nn.MSELoss()
 
     def forward (self, x):
@@ -32,7 +25,7 @@ class DQN (nn.Module):
         return x
     
     def loss (self, Q_values, rewards, Q_next_Values, dones ):
-        Q_new = rewards.to(self.device) + gamma * Q_next_Values * (1- dones.to(self.device))
+        Q_new = rewards.to(self.device) + GAMMA * Q_next_Values * (1- dones.to(self.device))
         return self.MSELoss(Q_values, Q_new)
     
     def load_params(self, path):
@@ -43,6 +36,3 @@ class DQN (nn.Module):
 
     def copy (self):
         return copy.deepcopy(self)
-
-    def __call__(self, states):
-        return self.forward(states).to(self.device)

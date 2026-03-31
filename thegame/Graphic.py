@@ -2,33 +2,29 @@ import pygame
 from Environment import Environment
 from airplane import Airplane
 import random
-
-BLUE = (0, 0, 255)
-LIGHTGRAY = (211, 211, 211)
-WIDTH, HEIGHT = 1450, 720
-FPS = 60
+from constant import *
 
 class Graphics:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("F15 Fury: Urban Assult")
-        self.main_surf = pygame.Surface((WIDTH, HEIGHT))
+        self.main_surf = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.background = pygame.image.load("pictures/background.jpg")
-        self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
+        self.background = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.buildings = []
         self.clock = pygame.time.Clock()
         self.player = Airplane(self)
         self.player_rect = self.player.player_rect
         self.collision = False
         self.collision_image = pygame.image.load("pictures/collision.png") 
-        self.collision_image = pygame.transform.scale(self.collision_image, (100, 100))
+        self.collision_image = pygame.transform.scale(self.collision_image, COLLISION_IMAGE_SIZE)
 
         self.time = pygame.time.Clock()
         self.starttimer = pygame.time.get_ticks()
         self.elapsed_time = (pygame.time.get_ticks() - self.starttimer) // 1000
 
-        self.precentage = 100
+        self.precentage = INITIAL_FUEL_PERCENTAGE
         self.FUEL_DECREASE_EVENT = pygame.USEREVENT + 1
         pygame.time.set_timer(self.FUEL_DECREASE_EVENT, 500)
 
@@ -36,10 +32,10 @@ class Graphics:
         pygame.time.set_timer(self.FUEL_BONUS_EVENT, 2000)
 
         self.fuel_image = pygame.image.load("pictures/fuel.png")  
-        self.fuel_image = pygame.transform.scale(self.fuel_image, (100, 100))
+        self.fuel_image = pygame.transform.scale(self.fuel_image, FUEL_IMAGE_SIZE)
 
         self.outofgas = pygame.image.load("pictures/outofgas.png")
-        self.outofgas = pygame.transform.scale(self.outofgas, (500,200))
+        self.outofgas = pygame.transform.scale(self.outofgas, OUT_OF_GAS_IMAGE_SIZE)
         self.fuel_items = [] 
 
     def render (self):
@@ -65,13 +61,13 @@ class Graphics:
             self.screen.blit(self.fuel_image, (fuel["x"], fuel["y"]))
             
         font = pygame.font.Font(None, 50)
-        text = font.render(f"fuel: {self.precentage}%", True, (255, 0, 0))
+        text = font.render(f"fuel: {self.precentage}%", True, COLOR_RED)
         self.screen.blit(text, (10, 45))
         font = pygame.font.Font(None, 50)
         self.elapsed_time = (pygame.time.get_ticks() - self.starttimer) // 1000
-        text = font.render(f"Time: {self.elapsed_time}", True, (255, 255, 255))
+        text = font.render(f"Time: {self.elapsed_time}", True, COLOR_WHITE)
         self.screen.blit(text, (10, 10))
-        self.time.tick(60)
+        self.time.tick(FPS)
 
 
         self.check_fuel_pickup()
@@ -124,7 +120,7 @@ class Graphics:
 
     def spawn_fuel_item(self):
         fuel_x = 1600
-        fuel_y = random.randint(100, HEIGHT - 100)
+        fuel_y = random.randint(100, SCREEN_HEIGHT - 100)
         self.fuel_items.append({"x":  fuel_x, "y": fuel_y})
 
     def check_fuel_pickup(self):
