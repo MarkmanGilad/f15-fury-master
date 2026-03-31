@@ -155,6 +155,10 @@ for each step:
 | `reward` | Cumulative episode reward (`total_reward`) |
 | `step_to_end` | Steps in the episode |
 | `avg_loss` | Mean MSE loss over training steps in the episode |
+| `holes_passed` | Number of building pairs passed |
+| `enemies_killed` | Number of enemies killed |
+| `fuels_collected` | Number of fuel pickups collected |
+| `score` | In-game score (`Environment.score`) |
 
 **Run config** logged at `wandb.init()`: learning rate, batch size, gamma, epsilon (start/final/decay), target update freq, buffer capacity, min buffer size, scheduler milestones/gamma, DQN input/output size, and full network architecture string.
 

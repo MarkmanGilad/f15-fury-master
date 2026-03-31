@@ -144,3 +144,10 @@ Found and fixed **3 bugs** in `Tensor_env()`, `move()`, and `building_reward()`:
 | # | Change | File | Detail |
 |---|--------|------|--------|
 | 1 | `TARGET_UPDATE_FREQ` 4 → 20 | `constant.py` | With C=4 the target net absorbed degraded policy weights too quickly, causing a smooth co-drift where both networks decline together (loss stays stable ~0.02 but Q-values drift downward). C=20 keeps the target anchored to a good policy for longer, giving the policy net time to recover from brief performance drops |
+
+### 13. Logging Enhancements
+
+| # | Change | File | Detail |
+|---|--------|------|--------|
+| 1 | Score logged to wandb | `train.py` | Added `score` (`Environment.score`) to per-episode wandb log |
+| 2 | Learning rate in console | `train.py` | Added current LR (from optimizer, reflecting scheduler) to per-episode print line |
