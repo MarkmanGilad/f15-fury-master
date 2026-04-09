@@ -12,9 +12,9 @@ import wandb
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-import matplotlib.pyplot as plt
-import torchvision
-import torchvision.transforms as transforms
+# import matplotlib.pyplot as plt
+# import torchvision
+# import torchvision.transforms as transforms
 from constant import *
 
 def main():
@@ -35,7 +35,7 @@ def main():
     # scheduler = torch.optim.lr_scheduler.StepLR(optim,100000, gamma=0.50)
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optim, SCHEDULER_MILESTONES, gamma=SCHEDULER_GAMMA)
     
-    num = 11
+    num = 12
     checkpoint_path = f"/save_model/checkpoint{num}.pth"
     buffer_path = f"/save_model/buffer{num}.pth"
 
